@@ -76,7 +76,7 @@ std::vector<hardware_interface::CommandInterface> SOARM100Interface::export_comm
 
 CallbackReturn SOARM100Interface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
 {
-    RCLCPP_INFO(rclcpp::get_logger("SOARM100Interface"), "Activating so_arm_100 hardware interface...");
+    RCLCPP_INFO(rclcpp::get_logger("SOARM100Interface"), "Activating so_arm_100 hardware interface on port %s...", serial_port_.c_str());
 
     if (use_serial_) {
         if(!st3215_.begin(serial_baudrate_, serial_port_.c_str())) {
@@ -142,7 +142,8 @@ CallbackReturn SOARM100Interface::on_activate(const rclcpp_lifecycle::State & /*
     // Load calibration
     std::string calib_file = info_.hardware_parameters.count("calibration_file") ?
         info_.hardware_parameters.at("calibration_file") : "";
-        
+    RCLCPP_INFO(rclcpp::get_logger("SOARM100Interface"), 
+               "Loading calibration file: %s", calib_file.c_str());
     if (!calib_file.empty()) {
         if (!load_calibration(calib_file)) {
             RCLCPP_WARN(rclcpp::get_logger("SOARM100Interface"), 
